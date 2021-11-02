@@ -21,8 +21,8 @@ class Land extends React.Component {
 			<div>
 	        	<Group>
 		          	<RegularPolygon
-		          		x={400 + (this.props.xOffset*87)}
-		          		y={100 + (this.props.yOffset*75)}
+		          		x={window.innerWidth/3 + (this.props.xOffset*87)}
+		          		y={window.innerHeight/4 + (this.props.yOffset*75)}
 		          		sides={6}
 		          		radius={50}
 		          		fill={catanHelper.getLandColor(this.props.type)}
@@ -32,8 +32,8 @@ class Land extends React.Component {
 		          	<Text					          		
 		          		fontSize={20}
 			            text={this.props.value + "\n" + catanHelper.getLandDots(this.props.value)}
-			            x={387 + (this.props.xOffset*87)}
-			            y={80 + (this.props.yOffset*75)}
+			            x={window.innerWidth/3.08 + (this.props.xOffset*87)}
+			            y={window.innerHeight/4.5 + (this.props.yOffset*75)}
 			            strokeWidth={1}
 			            align="center"
 		          	/>
