@@ -19,6 +19,7 @@ const helpers = {
 	
 	getLands: function() {
 		var piecesArray = [];
+		var nodeArray = [];
 		var valueArray = [2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12]
 		var typeArray = ["brick","brick","brick","ore","ore","ore","wood","wood","wood","wood",
 							"hay","hay","hay","hay","goat","goat","goat","goat"]
@@ -29,8 +30,14 @@ const helpers = {
 	        [valueArray[i], valueArray[j]] = [valueArray[j], valueArray[i]];
 	        [typeArray[i], typeArray[j]] = [typeArray[j], typeArray[i]];
     	}
+
+    	var xMultiplier = 87;
+    	var yMultiplier = 75;
+    	var xDivisor = 3.05;
+    	var yDivisor = 4.5;
+
     	var randomBlankNum = Math.floor(Math.random()*valueArray.length)
-    	var foundRandomNum = false;
+    	var foundRandomNum = false
     	var rowIndex = 0;
     	var columnIndex = 0;
     	var columnCounter = 1;
@@ -41,24 +48,45 @@ const helpers = {
     			columnCounter = 1;
     		}
     		if(i === randomBlankNum) {
-    			piecesArray.push({"type": "blank", "value": 0, "xOffset": (columnIndex+1)+this.getXOffsetMultiplier(rowIndex, columnIndex), "yOffset": rowIndex})
     			foundRandomNum = true
+    			let x = (window.innerWidth/3)+(((columnIndex+1)+this.getXOffsetMultiplier(rowIndex, columnIndex))*xMultiplier)
+    			let y = window.innerHeight/4+(rowIndex*yMultiplier)
+    			piecesArray.push({
+    						"id": i,
+    						"type": "blank", 
+    						"value": 0,
+    						"hexagonX": x, 
+    						"hexagonY": y,
+    						"textX": ((window.innerWidth/xDivisor)+((columnIndex+1)+this.getXOffsetMultiplier(rowIndex, columnIndex))*xMultiplier),
+    						"textY": window.innerHeight/yDivisor+(rowIndex*yMultiplier)
+    					})
+    			nodeArray.push({id: (rowIndex+1).toString() + '-' + columnCounter.toString(), type: 'special', position: { x: x, y: y }})
     			columnCounter++;
     			columnIndex++;
     		}
-    		if(columnCounter > rowArray[rowIndex]) { 
+    		if(columnCounter > rowArray[rowIndex]) {
     			rowIndex++;
     			columnIndex = 0;
     			columnCounter = 1;
     		}
-			piecesArray.push({"type": typeArray[i], "value": valueArray[i], 
-							"xOffset": (columnIndex+1)+this.getXOffsetMultiplier(rowIndex, columnIndex), "yOffset": rowIndex})
+    		let x_2 = (window.innerWidth/3)+(((columnIndex+1)+this.getXOffsetMultiplier(rowIndex, columnIndex))*xMultiplier)
+    		let y_2 = window.innerHeight/4+(rowIndex*yMultiplier)
+    		nodeArray.push({id: (rowIndex+1).toString() + '-' + columnCounter.toString(), type: 'special', position: { x: x_2, y: y_2 }})
+			piecesArray.push({
+							"id": (foundRandomNum) ? i+1 : i,
+							"type": typeArray[i],
+							"value": valueArray[i],
+							"hexagonX": x_2, 
+							"hexagonY": y_2,
+							"textX": ((window.innerWidth/xDivisor)+((columnIndex+1)+this.getXOffsetMultiplier(rowIndex, columnIndex))*xMultiplier),
+    						"textY": window.innerHeight/yDivisor+(rowIndex*yMultiplier)
+						})
 			columnCounter++;
 			columnIndex++;
     	}
     	//insert blank piece at random index
     	//piecesArray.splice(Math.floor(Math.random()*piecesArray.length),0,{"type": "blank", "value": 0, "offset": 0})
-    	return piecesArray
+    	return {'piecesArray': piecesArray, 'nodeArray': nodeArray};
 	},
 
 	getLandDots : function(value) {

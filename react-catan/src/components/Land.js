@@ -16,28 +16,29 @@ class Land extends React.Component {
 		super(props);
 	}
 
+	//TODO: fill each regular polygon (hexagon) with picture
+
 	render() {
 		return (
 			<div>
 	        	<Group>
 		          	<RegularPolygon
-		          		x={window.innerWidth/3 + (this.props.xOffset*87)}
-		          		y={window.innerHeight/4 + (this.props.yOffset*75)}
+		          		x={this.props.hexagonX}
+		          		y={this.props.hexagonY}
 		          		sides={6}
 		          		radius={50}
 		          		fill={catanHelper.getLandColor(this.props.type)}
-		          		
 		          		stroke="black"
 		          	/>
 		          	<Text					          		
 		          		fontSize={20}
 			            text={this.props.value + "\n" + catanHelper.getLandDots(this.props.value)}
-			            x={window.innerWidth/3.08 + (this.props.xOffset*87)}
-			            y={window.innerHeight/4.5 + (this.props.yOffset*75)}
+			            x={this.props.textX}
+			            y={this.props.textY}
 			            strokeWidth={1}
 			            align="center"
 		          	/>
-	          	</Group>	      	
+	          	</Group>
 			</div>
 		);
 	};

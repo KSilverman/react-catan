@@ -1,3 +1,23 @@
 .outline {
 	border: 1px solid blue;
 }
+
+#container1 {
+	position: relative;
+}
+
+#wrapper {
+	height: 100%;
+	width: 100%;
+}
+
+#front {
+	position: absolute;
+	z-index: 100;
+	top: 0;
+	right: 0;
+}
+
+#container1 Canvas, #overlay {
+	position: absolute !important;
+}

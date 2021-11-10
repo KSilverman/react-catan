@@ -1,9 +1,11 @@
 import React from 'react'
 import '../assets/css/react-catan.css';
-import {Container, Row, Col, Button} from 'react-bootstrap';
-import { Stage, Layer, RegularPolygon, Image, Group, Text } from 'react-konva';
+import { Container, Row, Col } from 'react-bootstrap';
 import Land from '../components/Land'
+import Board from '../components/Board'
 import catanHelper from '../assets/js/catanHelper'
+import nodesAndEdges from '../assets/js/nodesAndEdges'
+
 
 /** @class Game representing a Catan game. */
 class Game extends React.Component {
@@ -18,26 +20,15 @@ class Game extends React.Component {
  	super(props);
 
  	this.state = {
- 		landArray: catanHelper.getLands()
+ 		landArray: catanHelper.getLands(),
+ 		elements: nodesAndEdges.getAllElements(nodesAndEdges.getAllNodes(),nodesAndEdges.getAllEdges())		
  	}
  }
 
  render() {
  	return(
  		<Container fluid>
- 		<Row>
- 			<Stage width={window.innerWidth} height={window.innerHeight}>
-				<Layer>
-	 			{
-	 				this.state.landArray.map(land => (
-	 					<Col className="outline">
-	 						<Land type={land.type} value={land.value} xOffset={land.xOffset} yOffset={land.yOffset}/>
-	 					</Col>
-	 				))
-	 			}
- 				</Layer>
- 			</Stage>
- 		</Row>
+ 			<Board landArray={this.state.landArray} elements={this.state.elements}/>	
       	</Container>
  	);
  };
