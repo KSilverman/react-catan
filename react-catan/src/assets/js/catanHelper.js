@@ -1,5 +1,26 @@
 const helpers = {
 
+	//(x,y) is the position of hte center of the hexagon
+	getHexCoordinates: function(x, y) {
+		var a = 50 //half the length of the hexagon
+		var points = [];
+		points.push({'x': x, 'y': y-a})
+		points.push({'x': x, 'y': y+a})
+		points.push({'x': x+((Math.sqrt(3)*a)/2), 'y': y+(a/2)}) //bottom right
+		points.push({'x': x-((Math.sqrt(3)*a)/2), 'y': y+(a/2)}) //bottom left
+		points.push({'x': x+((Math.sqrt(3)*a)/2), 'y': y-(a/2)}) //top right
+		points.push({'x': x-((Math.sqrt(3)*a)/2), 'y': y-(a/2)}) //top left
+		return points;
+	},
+
+	nodeAlreadyExists: function(x, y, area, nodeArray) {
+		for(let i = 0; i < nodeArray.length; i++) {
+			var nodePos = nodeArray[i].position;
+			var inCircle = Math.pow(area, 2) - (Math.pow((x-nodePos.x),2) + Math.pow(y-nodePos.y,2))
+			if(inCircle >= 0) { return true; }
+		}
+		return false;
+	},
 
 	getXOffsetMultiplier: function(rowIndex, columnIndex) {
 		if(rowIndex === 0 || rowIndex === 4) {
@@ -20,6 +41,7 @@ const helpers = {
 	getLands: function() {
 		var piecesArray = [];
 		var nodeArray = [];
+		var edgeArray = [];
 		var valueArray = [2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12]
 		var typeArray = ["brick","brick","brick","ore","ore","ore","wood","wood","wood","wood",
 							"hay","hay","hay","hay","goat","goat","goat","goat"]
@@ -51,6 +73,7 @@ const helpers = {
     			foundRandomNum = true
     			let x = (window.innerWidth/3)+(((columnIndex+1)+this.getXOffsetMultiplier(rowIndex, columnIndex))*xMultiplier)
     			let y = window.innerHeight/4+(rowIndex*yMultiplier)
+    			let hexCords = this.getHexCoordinates(x,y);
     			piecesArray.push({
     						"id": i,
     						"type": "blank", 
@@ -60,7 +83,13 @@ const helpers = {
     						"textX": ((window.innerWidth/xDivisor)+((columnIndex+1)+this.getXOffsetMultiplier(rowIndex, columnIndex))*xMultiplier),
     						"textY": window.innerHeight/yDivisor+(rowIndex*yMultiplier)
     					})
-    			nodeArray.push({id: (rowIndex+1).toString() + '-' + columnCounter.toString(), type: 'special', position: { x: x, y: y }})
+
+    			for(let j = 0; j < hexCords.length; j++) {
+    				if(!this.nodeAlreadyExists(hexCords[j].x, hexCords[j].y, 5, nodeArray)) {
+    					nodeArray.push({id: (rowIndex+1).toString() + '-' + j.toString(), type: 'special', position: { x: hexCords[j].x, y: hexCords[j].y }})
+    				}
+    			}
+
     			columnCounter++;
     			columnIndex++;
     		}
@@ -71,7 +100,14 @@ const helpers = {
     		}
     		let x_2 = (window.innerWidth/3)+(((columnIndex+1)+this.getXOffsetMultiplier(rowIndex, columnIndex))*xMultiplier)
     		let y_2 = window.innerHeight/4+(rowIndex*yMultiplier)
-    		nodeArray.push({id: (rowIndex+1).toString() + '-' + columnCounter.toString(), type: 'special', position: { x: x_2, y: y_2 }})
+    		let hexCords_2 = this.getHexCoordinates(x_2,y_2);
+
+    		for(let j = 0; j < hexCords_2.length; j++) {
+    			if(!this.nodeAlreadyExists(hexCords_2[j].x, hexCords_2[j].y, 5, nodeArray)) {
+    				nodeArray.push({id: (rowIndex+1).toString() + '-' + j.toString(), type: 'special', position: { x: hexCords_2[j].x, y: hexCords_2[j].y }})
+    			}
+    		}
+
 			piecesArray.push({
 							"id": (foundRandomNum) ? i+1 : i,
 							"type": typeArray[i],
@@ -86,7 +122,7 @@ const helpers = {
     	}
     	//insert blank piece at random index
     	//piecesArray.splice(Math.floor(Math.random()*piecesArray.length),0,{"type": "blank", "value": 0, "offset": 0})
-    	return {'piecesArray': piecesArray, 'nodeArray': nodeArray};
+    	return {'piecesArray': piecesArray, 'nodeArray': nodeArray, 'edgeArray': edgeArray};
 	},
 
 	getLandDots : function(value) {

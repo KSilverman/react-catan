@@ -11,8 +11,10 @@ import nodesAndEdges from '../assets/js/nodesAndEdges'
 const customNodeStyles = {
 	background: 'pink',
 	border: '1px solid blue',
-	padding: 7,
+	padding: 5,
 	borderRadius: 50,
+	marginTop: -4,
+	marginLeft: -5
 };
 
 const customHandleStyle = {
@@ -100,32 +102,9 @@ class Board extends React.Component {
 				   		zoomOnDoubleClick={false}
 				   		nodeTypes={nodeTypes}
 				   	/>
-				   	
 			</div>
 		);
 	};
 }
-
-/*
-	<Stage width={window.innerWidth} height={window.innerHeight}>
-					<Layer>
-		 			{
-		 				this.props.landArray.piecesArray.map(land => (
-		 					<Col className="outline">
-		 						<Land 
-		 							id={land.id}
-		 							type={land.type} 
-		 							value={land.value} 
-		 							hexagonX={land.hexagonX}
-		 							hexagonY={land.hexagonY}
-		 							textX={land.textX}
-		 							textY={land.textY}
-		 						/>
-		 					</Col>
-		 				))
-		 			}
-	 				</Layer>
-	 			</Stage>
-*/
 
 export default Board;
