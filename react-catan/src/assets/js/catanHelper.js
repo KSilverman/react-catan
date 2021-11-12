@@ -86,7 +86,13 @@ const helpers = {
 
     			for(let j = 0; j < hexCords.length; j++) {
     				if(!this.nodeAlreadyExists(hexCords[j].x, hexCords[j].y, 5, nodeArray)) {
-    					nodeArray.push({id: (rowIndex+1).toString() + '-' + j.toString(), type: 'special', position: { x: hexCords[j].x, y: hexCords[j].y }})
+    					nodeArray.push({
+    						id: (rowIndex+1).toString() + '-' + columnCounter.toString() + '-' + j.toString(), 
+    						type: 'special', 
+    						position: { x: hexCords[j].x, y: hexCords[j].y, },
+    						data: { color: 'pink' },
+    						className: 'test'
+    					})
     				}
     			}
 
@@ -104,7 +110,13 @@ const helpers = {
 
     		for(let j = 0; j < hexCords_2.length; j++) {
     			if(!this.nodeAlreadyExists(hexCords_2[j].x, hexCords_2[j].y, 5, nodeArray)) {
-    				nodeArray.push({id: (rowIndex+1).toString() + '-' + j.toString(), type: 'special', position: { x: hexCords_2[j].x, y: hexCords_2[j].y }})
+    				nodeArray.push({
+    					id: (rowIndex+1).toString() + '-' + columnCounter.toString() + '-' + j.toString(),
+    					type: 'special', 
+    					position: { x: hexCords_2[j].x, y: hexCords_2[j].y },
+    					data: { color: 'pink' },
+    					className: 'test'
+    				})
     			}
     		}
 
@@ -122,7 +134,31 @@ const helpers = {
     	}
     	//insert blank piece at random index
     	//piecesArray.splice(Math.floor(Math.random()*piecesArray.length),0,{"type": "blank", "value": 0, "offset": 0})
-    	return {'piecesArray': piecesArray, 'nodeArray': nodeArray, 'edgeArray': edgeArray};
+
+    	for(let i = 0; i < nodeArray.length; i++) {
+    		var currentNode = nodeArray[i];
+    		for(let j = i+1; j < nodeArray.length; j++) {
+    			var otherNode = nodeArray[j]
+    			var distance = Math.sqrt(Math.pow(otherNode.position.x-currentNode.position.x,2)+Math.pow(otherNode.position.y-currentNode.position.y,2))
+				if(distance < 55) { //adding buffer of 5 px
+					edgeArray.push({
+						id: i.toString() + '-' + j.toString(), 
+						source: currentNode.id, 
+						target: otherNode.id, 
+						type: 'straight', 
+						style:{stroke:'orange',strokeWidth:5},
+						className: 'test'
+					})
+	    		}
+	    	}
+	    }
+
+    	return {
+    		'piecesArray': piecesArray,
+    		'nodeArray': nodeArray, 
+    		'edgeArray': edgeArray, 
+    		'elements': nodeArray.concat(edgeArray)
+    	};
 	},
 
 	getLandDots : function(value) {

@@ -28,7 +28,10 @@ class Game extends React.Component {
  render() {
  	return(
  		<Container fluid>
- 			<Board landArray={this.state.landArray} elements={this.state.elements}/>	
+ 			<Board  
+                landArray={this.state.landArray} 
+                elements={this.state.elements} 
+            />	
       	</Container>
  	);
  };

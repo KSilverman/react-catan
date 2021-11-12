@@ -1,20 +1,22 @@
 import React from 'react'
 import '../assets/css/react-catan.css';
 import { Container, Row, Col } from 'react-bootstrap';
-import ReactFlow, { Handle } from 'react-flow-renderer';
+import ReactFlow, { ReactFlowProvider, Handle, isNode  } from 'react-flow-renderer';
 import { Stage, Layer, RegularPolygon, Image, Group, Text } from 'react-konva';
 import { Html } from 'react-konva-utils';
 import Land from '../components/Land'
 import catanHelper from '../assets/js/catanHelper'
 import nodesAndEdges from '../assets/js/nodesAndEdges'
 
-const customNodeStyles = {
-	background: 'pink',
-	border: '1px solid blue',
-	padding: 5,
-	borderRadius: 50,
-	marginTop: -4,
-	marginLeft: -5
+const customNodeStyles = function(color) {
+	return {
+		background: color,
+		border: '1px solid blue',
+		padding: 5,
+		borderRadius: 50,
+		marginTop: -4,
+		marginLeft: -5 
+	}
 };
 
 const customHandleStyle = {
@@ -24,7 +26,7 @@ const customHandleStyle = {
 
 const CustomNodeComponent = ({ data }) => {
 	return (
-		<div style={customNodeStyles}>
+		<div style={customNodeStyles(data.color)}>
 		    <Handle type="source" position="right" style={customHandleStyle} />
 		    <Handle type="target" position="left" style={customHandleStyle} />
 		</div>
@@ -53,15 +55,39 @@ class Board extends React.Component {
  */
 	constructor(props) {
 		super(props);
+		this.state = {
+			elements: this.props.landArray.elements
+		}
+
+		this.onElementClick = this.onElementClick.bind(this)
 	}
 
 	componentDidMount() {
 	    window.addEventListener("resize", this.onLoad);
 	}
 
-	  componentWillUnmount() {
+	componentWillUnmount() {
 	    window.removeEventListener("resize", this.onLoad);
 	}
+
+	onElementClick(event, element) {
+		var newElements = []
+		this.state.elements.map((elem) => {
+			if(element.id === elem.id) {
+				if(isNode(elem)) {
+					elem.data.color = 'black'
+				} else {
+					elem.style = {stroke:'white',strokeWidth:5}
+				}
+			}
+			newElements.push(elem)
+		});
+
+		this.setState(state => ({elements: newElements}))
+		
+	}
+
+
 
 	render() {
 		return (
@@ -85,23 +111,28 @@ class Board extends React.Component {
 		 			}
 	 				</Layer>
 	 			</Stage>
-	 			 <ReactFlow 
-	 			 		style={{ height: window.innerHeight, 
-	 			 			width: window.innerWidth, 
-	 			 			marginTop: -(window.innerHeight),
-	 			 			top: 0,
-	 			 			left: 0,
-	 			 			
-	 			 		}}
-	 			 		
-				   		elements={this.props.landArray.nodeArray} 
-				   		nodesConnectable={false}
-				   		nodesDraggable={false}
-				   		paneMoveable={false}
-				   		zoomOnScroll={false}
-				   		zoomOnDoubleClick={false}
-				   		nodeTypes={nodeTypes}
-				   	/>
+	 			<ReactFlowProvider>
+	 			<ReactFlow 
+ 			 		style={{ 
+ 			 			height: window.innerHeight, 
+ 			 			width: window.innerWidth, 
+ 			 			marginTop: -(window.innerHeight),
+ 			 			top: 0,
+ 			 			left: 0,			
+ 			 		}}
+ 			 		
+			   		elements={this.state.elements} 
+			   		nodesConnectable={false}
+			   		nodesDraggable={false}
+			   		paneMoveable={false}
+			   		zoomOnScroll={false}
+			   		zoomOnDoubleClick={false}
+			   		nodeTypes={nodeTypes}
+			   		elementsSelectable={true}
+			   		connectionMode={'loose'}
+			   		onElementClick={this.onElementClick}
+				/>
+				</ReactFlowProvider>
 			</div>
 		);
 	};

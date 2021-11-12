@@ -6,6 +6,10 @@
 	position: relative;
 }
 
+.test:hover {
+	cursor: pointer !important;
+}
+
 #wrapper {
 	height: 100%;
 	width: 100%;
