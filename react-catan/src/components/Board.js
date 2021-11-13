@@ -1,7 +1,7 @@
 import React from 'react'
 import '../assets/css/react-catan.css';
 import { Container, Row, Col } from 'react-bootstrap';
-import ReactFlow, { ReactFlowProvider, Handle, isNode  } from 'react-flow-renderer';
+import ReactFlow, { ReactFlowProvider, Handle, isNode, getConnectedEdges  } from 'react-flow-renderer';
 import { Stage, Layer, RegularPolygon, Image, Group, Text } from 'react-konva';
 import { Html } from 'react-konva-utils';
 import Land from '../components/Land'
@@ -56,7 +56,10 @@ class Board extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			elements: this.props.landArray.elements
+			elements: this.props.landArray.elements,
+			nodes: this.props.landArray.nodeArray,
+			edges: this.props.landArray.edgeArray,
+			intersections: this.props.landArray.intersectionArray
 		}
 
 		this.onElementClick = this.onElementClick.bind(this)
@@ -70,12 +73,23 @@ class Board extends React.Component {
 	    window.removeEventListener("resize", this.onLoad);
 	}
 
+	getIntersectionByID(id) {
+		let intersections = this.state.intersections
+		for(let i = 0; i < intersections.length; i++) {
+			if(intersections[i].id === id) { return intersections[i] }
+		}
+		return null
+	}
+
 	onElementClick(event, element) {
 		var newElements = []
 		this.state.elements.map((elem) => {
 			if(element.id === elem.id) {
 				if(isNode(elem)) {
 					elem.data.color = 'black'
+					console.log(this.getIntersectionByID(elem.id))
+					//console.log(this.state.intersections[4])
+					console.log(getConnectedEdges([elem],this.state.edges))
 				} else {
 					elem.style = {stroke:'white',strokeWidth:5}
 				}
@@ -112,26 +126,26 @@ class Board extends React.Component {
 	 				</Layer>
 	 			</Stage>
 	 			<ReactFlowProvider>
-	 			<ReactFlow 
- 			 		style={{ 
- 			 			height: window.innerHeight, 
- 			 			width: window.innerWidth, 
- 			 			marginTop: -(window.innerHeight),
- 			 			top: 0,
- 			 			left: 0,			
- 			 		}}
- 			 		
-			   		elements={this.state.elements} 
-			   		nodesConnectable={false}
-			   		nodesDraggable={false}
-			   		paneMoveable={false}
-			   		zoomOnScroll={false}
-			   		zoomOnDoubleClick={false}
-			   		nodeTypes={nodeTypes}
-			   		elementsSelectable={true}
-			   		connectionMode={'loose'}
-			   		onElementClick={this.onElementClick}
-				/>
+		 			<ReactFlow 
+	 			 		style={{ 
+	 			 			height: window.innerHeight, 
+	 			 			width: window.innerWidth, 
+	 			 			marginTop: -(window.innerHeight),
+	 			 			top: 0,
+	 			 			left: 0,			
+	 			 		}}
+	 			 		
+				   		elements={this.state.elements} 
+				   		nodesConnectable={false}
+				   		nodesDraggable={false}
+				   		paneMoveable={false}
+				   		zoomOnScroll={false}
+				   		zoomOnDoubleClick={false}
+				   		nodeTypes={nodeTypes}
+				   		elementsSelectable={true}
+				   		connectionMode={'loose'}
+				   		onElementClick={this.onElementClick}
+					/>
 				</ReactFlowProvider>
 			</div>
 		);

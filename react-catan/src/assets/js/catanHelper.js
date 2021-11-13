@@ -17,9 +17,21 @@ const helpers = {
 		for(let i = 0; i < nodeArray.length; i++) {
 			var nodePos = nodeArray[i].position;
 			var inCircle = Math.pow(area, 2) - (Math.pow((x-nodePos.x),2) + Math.pow(y-nodePos.y,2))
-			if(inCircle >= 0) { return true; }
+			if(inCircle >= 0) { 
+				return { bool: true, alreadyExistingNode: nodeArray[i] }; 
+			}
 		}
-		return false;
+		return { bool: false, alreadyExistingNode: null };
+	},
+
+	findIntersection: function(id, intersectionArray) {
+		let intersection = -1
+		for(let i = 0; i < intersectionArray.length; i++) {
+			if(intersectionArray[i].id === id) { 
+				intersection = i
+			}
+		}
+		return intersection;
 	},
 
 	getXOffsetMultiplier: function(rowIndex, columnIndex) {
@@ -42,6 +54,8 @@ const helpers = {
 		var piecesArray = [];
 		var nodeArray = [];
 		var edgeArray = [];
+		var pathArray = [];
+		var intersectionArray = [];
 		var valueArray = [2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12]
 		var typeArray = ["brick","brick","brick","ore","ore","ore","wood","wood","wood","wood",
 							"hay","hay","hay","hay","goat","goat","goat","goat"]
@@ -93,6 +107,12 @@ const helpers = {
     						data: { color: 'pink' },
     						className: 'test'
     					})
+    					intersectionArray.push({
+    						id: (rowIndex+1).toString() + '-' + columnCounter.toString() + '-' + j.toString(),
+    						owner: '',
+    						types: [],
+    						values: []
+    					})
     				}
     			}
 
@@ -109,7 +129,8 @@ const helpers = {
     		let hexCords_2 = this.getHexCoordinates(x_2,y_2);
 
     		for(let j = 0; j < hexCords_2.length; j++) {
-    			if(!this.nodeAlreadyExists(hexCords_2[j].x, hexCords_2[j].y, 5, nodeArray)) {
+    			let nodeExists = this.nodeAlreadyExists(hexCords_2[j].x, hexCords_2[j].y, 5, nodeArray)
+    			if(!nodeExists.bool) {
     				nodeArray.push({
     					id: (rowIndex+1).toString() + '-' + columnCounter.toString() + '-' + j.toString(),
     					type: 'special', 
@@ -117,6 +138,18 @@ const helpers = {
     					data: { color: 'pink' },
     					className: 'test'
     				})
+    				intersectionArray.push({
+    					id: (rowIndex+1).toString() + '-' + columnCounter.toString() + '-' + j.toString(),
+						owner: '',
+						types: [typeArray[i]],
+						values: [valueArray[i]]
+    				})
+    			} else {
+    				let currentIntersectionIndex = this.findIntersection(nodeExists.alreadyExistingNode.id, intersectionArray)
+    				if(currentIntersectionIndex !== -1) {
+	    				intersectionArray[currentIntersectionIndex].types.push(typeArray[i])
+	    				intersectionArray[currentIntersectionIndex].values.push(valueArray[i])
+    				}
     			}
     		}
 
@@ -149,6 +182,9 @@ const helpers = {
 						style:{stroke:'orange',strokeWidth:5},
 						className: 'test'
 					})
+					pathArray.push({
+						owner: ''
+					})
 	    		}
 	    	}
 	    }
@@ -157,7 +193,9 @@ const helpers = {
     		'piecesArray': piecesArray,
     		'nodeArray': nodeArray, 
     		'edgeArray': edgeArray, 
-    		'elements': nodeArray.concat(edgeArray)
+    		'elements': nodeArray.concat(edgeArray),
+    		'intersectionArray': intersectionArray,
+    		'pathArray': pathArray
     	};
 	},
 

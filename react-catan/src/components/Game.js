@@ -21,7 +21,7 @@ class Game extends React.Component {
 
  	this.state = {
  		landArray: catanHelper.getLands(),
- 		elements: nodesAndEdges.getAllElements(nodesAndEdges.getAllNodes(),nodesAndEdges.getAllEdges())		
+ 		elements: nodesAndEdges.getAllElements(nodesAndEdges.getAllNodes(),nodesAndEdges.getAllEdges())
  	}
  }
 
@@ -30,7 +30,7 @@ class Game extends React.Component {
  		<Container fluid>
  			<Board  
                 landArray={this.state.landArray} 
-                elements={this.state.elements} 
+                elements={this.state.elements}
             />	
       	</Container>
  	);
