@@ -28,6 +28,7 @@ class Land extends React.Component {
 		          		sides={6}
 		          		radius={50}
 		          		fill={catanHelper.getLandColor(this.props.type)}
+		          		fillPatternImage={catanHelper.getLandPNG(this.props.type)}
 		          		stroke="black"
 		          	/>
 		          	<Text					          		

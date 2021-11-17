@@ -60,6 +60,7 @@ const helpers = {
 		var typeArray = ["brick","brick","brick","ore","ore","ore","wood","wood","wood","wood",
 							"hay","hay","hay","hay","goat","goat","goat","goat"]
 		var rowArray = [3,4,5,4,3]
+		var desertPlacementArray = [4,5,8,9,10,13,14] //possible desert spots
 		//randomize values and types (same length)
 		for (let i = valueArray.length - 1; i > 0; i--) {
 	        const j = Math.floor(Math.random() * (i + 1));
@@ -72,7 +73,7 @@ const helpers = {
     	var xDivisor = 3.05;
     	var yDivisor = 4.5;
 
-    	var randomBlankNum = Math.floor(Math.random()*valueArray.length)
+    	var randomBlankNum = desertPlacementArray[Math.floor(Math.random()*desertPlacementArray.length)]
     	var foundRandomNum = false
     	var rowIndex = 0;
     	var columnIndex = 0;
@@ -104,7 +105,7 @@ const helpers = {
     						id: (rowIndex+1).toString() + '-' + columnCounter.toString() + '-' + j.toString(), 
     						type: 'special', 
     						position: { x: hexCords[j].x, y: hexCords[j].y, },
-    						data: { color: 'pink' },
+    						data: { color: 'rgba(0,0,0,0.0)' },
     						className: 'test'
     					})
     					intersectionArray.push({
@@ -135,7 +136,7 @@ const helpers = {
     					id: (rowIndex+1).toString() + '-' + columnCounter.toString() + '-' + j.toString(),
     					type: 'special', 
     					position: { x: hexCords_2[j].x, y: hexCords_2[j].y },
-    					data: { color: 'pink' },
+    					data: { color: 'rgba(0,0,0,0.0)' },
     					className: 'test'
     				})
     				intersectionArray.push({
@@ -154,14 +155,14 @@ const helpers = {
     		}
 
 			piecesArray.push({
-							"id": (foundRandomNum) ? i+1 : i,
-							"type": typeArray[i],
-							"value": valueArray[i],
-							"hexagonX": x_2, 
-							"hexagonY": y_2,
-							"textX": ((window.innerWidth/xDivisor)+((columnIndex+1)+this.getXOffsetMultiplier(rowIndex, columnIndex))*xMultiplier),
-    						"textY": window.innerHeight/yDivisor+(rowIndex*yMultiplier)
-						})
+						"id": (foundRandomNum) ? i+1 : i,
+						"type": typeArray[i],
+						"value": valueArray[i],
+						"hexagonX": x_2, 
+						"hexagonY": y_2,
+						"textX": ((window.innerWidth/xDivisor)+((columnIndex+1)+this.getXOffsetMultiplier(rowIndex, columnIndex))*xMultiplier),
+						"textY": window.innerHeight/yDivisor+(rowIndex*yMultiplier)
+					})
 			columnCounter++;
 			columnIndex++;
     	}
@@ -183,6 +184,7 @@ const helpers = {
 						className: 'test'
 					})
 					pathArray.push({
+						id: i.toString() + '-' + j.toString(),
 						owner: ''
 					})
 	    		}
@@ -262,10 +264,27 @@ const helpers = {
 			fillPatternOffsetX={250}
 			fillPatternOffsetY={70}
 		*/
-		var image = new Image()
+		var image = new Image(50,50)
 		var landImage = require('../img/lands/'+imageName+'.png').default
 		image.src = landImage
 		return image
+	},
+
+	getPlayers: function(numberOfPlayers) {
+		var players = []
+		var colors = ['blue', 'red', 'white', 'orange'];
+		for(let i = 0; i < numberOfPlayers; i++) {
+			var playerColor = colors[i];
+			players.push({
+				name: playerColor,
+				roads: 15,
+				settlements: 5,
+				cities: 4,
+				hand: [1, 2],
+				points: 0
+			})
+		}
+		return players
 	}
 
 }

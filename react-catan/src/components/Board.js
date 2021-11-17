@@ -83,21 +83,24 @@ class Board extends React.Component {
 
 	onElementClick(event, element) {
 		var newElements = []
+		var currentPlayer = this.props.players[this.props.currentTurn]
 		this.state.elements.map((elem) => {
 			if(element.id === elem.id) {
 				if(isNode(elem)) {
-					elem.data.color = 'black'
-					console.log(this.getIntersectionByID(elem.id))
-					//console.log(this.state.intersections[4])
-					console.log(getConnectedEdges([elem],this.state.edges))
+					let currentIntersectionIndex = catanHelper.findIntersection(elem.id, this.state.intersections)
+					if(this.state.intersections[currentIntersectionIndex].owner === '') {
+						let newColor = currentPlayer.name
+						elem.data.color = newColor
+						this.state.intersections[currentIntersectionIndex].owner = currentPlayer.name
+						console.log(this.getIntersectionByID(elem.id))
+					}
 				} else {
 					elem.style = {stroke:'white',strokeWidth:5}
 				}
 			}
 			newElements.push(elem)
 		});
-
-		this.setState(state => ({elements: newElements}))
+		this.setState(state => ({elements: newElements, intersections: this.state.intersections}))
 		
 	}
 
