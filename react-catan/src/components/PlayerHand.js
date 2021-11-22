@@ -1,7 +1,13 @@
 import React from 'react'
 import { Row, Col, Button } from 'react-bootstrap';
+import catanHelper from '../assets/js/catanHelper'
 import '../assets/css/react-catan.css';
 
+const customNameStyle = function(color) {
+    return {
+        color: color
+    }
+};
 
 /** @class Game representing a Catan game. */
 class PlayerHand extends React.Component {
@@ -18,18 +24,35 @@ class PlayerHand extends React.Component {
 
  render() {
  	return(
- 		<Col className="outline">
-            <Row>
-                <Col>
-                    { this.props.hand }
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <Button>End Turn</Button>
-                </Col>
-            </Row>
-        </Col>
+        <div>
+ 		<Row>
+            <Col>
+                { this.props.player.name } - Points: {this.props.player.points}
+            </Col>
+        </Row>
+
+        <Row>
+            <Col>
+                Buildings Remaining: 
+                Roads: x{this.props.player.roads} 
+                Settlments: x{this.props.player.settlements} 
+                Cities: x{this.props.player.cities}
+            </Col>
+        </Row>
+
+        <Row>
+            <Col>
+                Cards:
+                {
+                    this.props.player.hand.map((card) => (
+                        
+                            <img src={catanHelper.getCard(card)} class="card-image" alt="" />
+                        
+                    ))
+                }
+            </Col>
+        </Row>
+        </div>
  	);
  };
 }

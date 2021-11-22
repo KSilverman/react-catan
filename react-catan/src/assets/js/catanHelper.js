@@ -24,6 +24,20 @@ const helpers = {
 		return { bool: false, alreadyExistingNode: null };
 	},
 
+	adjectIntersectionExists: function(node, nodeArray, intersectionArray) {
+		for(let i = 0; i < nodeArray.length; i++) {
+			var n = nodeArray[i]
+			var distance = Math.sqrt(Math.pow(n.position.x-node.position.x,2)
+							+ Math.pow(n.position.y-node.position.y,2))
+			if(distance < 55) {
+				var currentIntersectionIndex = this.findIntersection(n.id, intersectionArray)
+				var currentIntersection = intersectionArray[currentIntersectionIndex]
+				if(currentIntersection.owner !== '') { return true; }
+			}
+		}
+		return false;
+	},
+
 	findIntersection: function(id, intersectionArray) {
 		let intersection = -1
 		for(let i = 0; i < intersectionArray.length; i++) {
@@ -111,8 +125,7 @@ const helpers = {
     					intersectionArray.push({
     						id: (rowIndex+1).toString() + '-' + columnCounter.toString() + '-' + j.toString(),
     						owner: '',
-    						types: [],
-    						values: []
+    						data: []
     					})
     				}
     			}
@@ -142,14 +155,12 @@ const helpers = {
     				intersectionArray.push({
     					id: (rowIndex+1).toString() + '-' + columnCounter.toString() + '-' + j.toString(),
 						owner: '',
-						types: [typeArray[i]],
-						values: [valueArray[i]]
+						data: [ { [typeArray[i]]: valueArray[i]} ]
     				})
     			} else {
     				let currentIntersectionIndex = this.findIntersection(nodeExists.alreadyExistingNode.id, intersectionArray)
     				if(currentIntersectionIndex !== -1) {
-	    				intersectionArray[currentIntersectionIndex].types.push(typeArray[i])
-	    				intersectionArray[currentIntersectionIndex].values.push(valueArray[i])
+    					intersectionArray[currentIntersectionIndex].data.push({ [typeArray[i]]: valueArray[i] })
     				}
     			}
     		}
@@ -272,7 +283,7 @@ const helpers = {
 
 	getPlayers: function(numberOfPlayers) {
 		var players = []
-		var colors = ['blue', 'red', 'white', 'orange'];
+		var colors = ['Blue', 'Red', 'White', 'Orange'];
 		for(let i = 0; i < numberOfPlayers; i++) {
 			var playerColor = colors[i];
 			players.push({
@@ -280,11 +291,35 @@ const helpers = {
 				roads: 15,
 				settlements: 5,
 				cities: 4,
-				hand: [1, 2],
+				hand: [],
 				points: 0
 			})
 		}
 		return players
+	},
+
+	getPlayerIndexByName: function(playerName) {
+		if(playerName === 'Red') { return 1 }
+		if(playerName === 'White') { return 2 }
+		if(playerName === 'Orange') { return 3 }
+		return 0;
+	},
+
+	getCard: function(cardType) {
+		var cardImage = require('../img/cards/resources/'+cardType+'.jpg').default
+		return cardImage
+	},
+
+	getIntersectionsFromValue(value, intersectionArray) {
+		var returnArray = []
+		for(let intersection in intersectionArray) {
+			for(let val in intersection.values) {
+				if(value === val) {
+					returnArray.push(intersection)
+				}
+			}
+		}
+		return returnArray;
 	}
 
 }

@@ -87,13 +87,13 @@ class Board extends React.Component {
 		this.state.elements.map((elem) => {
 			if(element.id === elem.id) {
 				if(isNode(elem)) {
-					let currentIntersectionIndex = catanHelper.findIntersection(elem.id, this.state.intersections)
-					if(this.state.intersections[currentIntersectionIndex].owner === '') {
+					if(!catanHelper.adjectIntersectionExists(elem, this.state.nodes, this.state.intersections)) {
+						let currentIntersectionIndex = catanHelper.findIntersection(elem.id, this.state.intersections)
 						let newColor = currentPlayer.name
 						elem.data.color = newColor
-						this.state.intersections[currentIntersectionIndex].owner = currentPlayer.name
+						this.state.intersections[currentIntersectionIndex].owner = newColor
 						console.log(this.getIntersectionByID(elem.id))
-					}
+					} else { console.log('adjecent intersection exists') }
 				} else {
 					elem.style = {stroke:'white',strokeWidth:5}
 				}

@@ -8,6 +8,11 @@ import PlayerHand from '../components/PlayerHand'
 import catanHelper from '../assets/js/catanHelper'
 import nodesAndEdges from '../assets/js/nodesAndEdges'
 
+const customNameStyle = function(color) {
+    return {
+        color: color
+    }
+};
 
 /** @class Game representing a Catan game. */
 class Game extends React.Component {
@@ -25,23 +30,64 @@ class Game extends React.Component {
         	landArray: catanHelper.getLands(),
         	players: catanHelper.getPlayers(this.props.numberOfPlayers),
             currentRoll: 0,
-            currentTurn: 0
+            currentTurn: 0,
+            isRolled: false
         }
 
         this.rollDice = this.rollDice.bind(this)
         this.endTurn = this.endTurn.bind(this)
+        this.buildRoad = this.buildRoad.bind(this)
+        this.buildSettlement = this.buildSettlement.bind(this)
+        this.buildCity = this.buildCity.bind(this)
+        this.giveDevCard = this.giveDevCard.bind(this)
     }
 
     rollDice() {
         let num1 = Math.floor(Math.random() * 6) + 1
         let num2 = Math.floor(Math.random() * 6) + 1
-        this.setState(state => ({currentRoll: num1+num2}))
+        let newRoll = num1+num2;
+        let updatedPlayers = this.state.players
+
+        for(let i = 0; i < this.state.intersections; i++) {
+            let intersection = this.state.intersections[i];
+            if(intersection.owner !== '') {
+                let intersectionValues = Object.keys(intersection.data)
+                for(let j = 0; j < intersection.data.length; j++) {
+                    console.log(intersectionValues[j])
+                    if(intersectionValues[j] == newRoll) {
+                        //add first entry (the value) to player hand
+                        console.log("yes")
+                        updatedPlayers[catanHelper.getPlayerIndexByName(intersection.owner)].hand.push(intersection.data[j][0]) 
+                    }
+                }
+            }
+        }
+
+        console.log(updatedPlayers)
+
+        this.setState(state => ({currentRoll: newRoll, players: updatedPlayers, isRolled: true}))
     }
 
     endTurn(index) {
         let currentTurn = this.state.currentTurn
         let nextTurn = (currentTurn < this.props.numberOfPlayers-1) ? currentTurn+1 : 0
-        this.setState(state => ({currentTurn: nextTurn}))
+        this.setState(state => ({currentTurn: nextTurn, isRolled: false}))
+    }
+
+    buildRoad(index) {
+
+    }
+
+    buildSettlement(index) {
+
+    }
+
+    buildCity(index) {
+
+    }
+
+    giveDevCard(index) {
+
     }
 
     render() {
@@ -50,24 +96,46 @@ class Game extends React.Component {
                 <Row>
                     <Col> 
                         Current Roll: {this.state.currentRoll} 
-                        <Button onClick={this.rollDice} variant="warning">Roll</Button>
+                        <Button onClick={this.rollDice} variant="info">Roll</Button>
                     </Col>
                 </Row>
+
                 <Row>
+                    <Col>
                     {
                         this.state.players.map((player, index) => (
-                            <Col className="outline">
+                            <Row className="outline" style={customNameStyle(player.name)}>
+                                <PlayerHand player={player} />
                                 <Row>
+                                    Actions:
                                     <Col>
-                                        Points: { player.points }
+                                        <Button variant="primary" 
+                                                onClick={() => this.buildRoad(index)}
+                                                disabled={index !== this.state.currentTurn}>
+                                            Road
+                                        </Button>
                                     </Col>
-                                </Row>
-                                <Row>
                                     <Col>
-                                        Hand: { player.hand }
+                                        <Button variant="success" 
+                                                onClick={() => this.buildSettlement(index)}
+                                                disabled={index !== this.state.currentTurn}>
+                                            Settlement
+                                        </Button>
                                     </Col>
-                                </Row>
-                                <Row>
+                                    <Col>
+                                        <Button variant="warning" 
+                                                onClick={() => this.buildCity(index)}
+                                                disabled={index !== this.state.currentTurn}>
+                                            City
+                                        </Button>
+                                    </Col>
+                                    <Col>
+                                        <Button variant="light" 
+                                                onClick={() => this.giveDevCard(index)}
+                                                disabled={index !== this.state.currentTurn}>
+                                            Dev Card
+                                        </Button>
+                                    </Col>
                                     <Col>
                                         <Button variant="danger" 
                                                 onClick={() => this.endTurn(index)}
@@ -76,10 +144,12 @@ class Game extends React.Component {
                                         </Button>
                                     </Col>
                                 </Row>
-                            </Col>
+                            </Row>
                         ))
                     }
+                    </Col>
                 </Row>
+
                 <Row>
                     <Col>
              			<Board  
